@@ -10,10 +10,32 @@ export type NgFluxDialogRoot = {
 }
 
 export type NgFluxDialogConfig = {
+  /**
+   * Close when the `Esc` key is pressed.
+   */
   closeOnEsc?: boolean;
+
+  /**
+   * @deprecated
+   *
+   * There's currently no way to intercept browser's back button.
+   * This will be completely removed in the future.
+   */
   closeOnBackBtn?: boolean;
+
+  /**
+   * Close when the dialog backdrop is clicked.
+   */
   backdropClose?: boolean;
+
+  /**
+   * Display close button in the `<ngf-dialog-header>` component.
+   */
   closeBtn?: boolean;
+
+  /**
+   * Data to be injected into the dialog
+   */
   data?: any
 };
 

@@ -60,7 +60,7 @@ export class NgFluxDialogInstance<T = any> {
       } break;
 
       case 'backButton.close': {
-        if (config.closeOnBackBtn) this.close();
+        this.close();
       } break;
 
       case 'close': {

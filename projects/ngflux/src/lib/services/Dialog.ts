@@ -26,7 +26,6 @@ export class NgFluxDialog {
     config ??= {};
     config.backdropClose ??= true;
     config.closeBtn ??= true;
-    config.closeOnBackBtn ??= true;
     config.closeOnEsc ??= true;
 
     const { internal } = this;
@@ -53,7 +52,6 @@ export class NgFluxDialog {
 
   alert(data: NgFluxDialogAlertOptions) {
     const dialog = this.open<boolean>(NgFluxAlertDialog, {
-      closeOnBackBtn: false,
       backdropClose: false,
       closeOnEsc: false,
       data
@@ -74,7 +72,6 @@ export class NgFluxDialog {
 
   confirm(data: NgFluxDialogConfirmOptions) {
     const dialog = this.open<boolean>(NgFluxConfirmDialog, {
-      closeOnBackBtn: false,
       backdropClose: false,
       closeOnEsc: false,
       data
@@ -87,7 +84,6 @@ export class NgFluxDialog {
 
   prompt(data: NgFluxDialogPromptOptions) {
     const dialog = this.open(NgFluxPromptDialog, {
-      closeOnBackBtn: false,
       backdropClose: false,
       closeOnEsc: false,
       data

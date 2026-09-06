@@ -13,7 +13,7 @@ export class NgFluxDialogInternal {
   readonly isOpen = computed(() => this.count() > 0);
 
   readonly active = computed(() => {
-    const entries = this.cloneList();
+    const entries = Array.from(this.list());
     if (!entries.length) return null;
 
     const lastIndex = entries.length - 1;
@@ -36,17 +36,17 @@ export class NgFluxDialogInternal {
       body?.classList.toggle('ngf-dialog-open', isOpen);
     });
 
-    window.addEventListener('popstate', e => {
-      const active = this.active();
-      if (!active) return;
+    effect(onCleanup => {
+      const handler = (e: PopStateEvent) => {
+        if (!this.count()) return;
+        this.closeAll();
+      };
 
-      history.forward();
+      window.addEventListener('popstate', handler);
 
-      const config = active.config;
-
-      if (config.closeOnBackBtn) {
-        active.send({ name: 'backButton.close' });
-      }
+      onCleanup(() => {
+        window.removeEventListener('popstate', handler);
+      });
     });
   }
 
@@ -60,8 +60,6 @@ export class NgFluxDialogInternal {
 
   // ==========================
 
-  private readonly cloneList = () => Array.from(this.list());
-
   private readonly indexOf = (item: NgFluxDialogInstance) => {
     const entries = this.list();
     return entries.indexOf(item);
@@ -72,31 +70,25 @@ export class NgFluxDialogInternal {
     item?.focus();
   }
 
-  readonly add = (...items: NgFluxDialogInstance[]) => {
-    const entries = this.cloneList();
+  readonly add = (...items: NgFluxDialogInstance[]) => this.list.update(v => {
+    const list = Array.from(v);
 
-    entries.push(...items);
+    list.push(...items);
 
-    this.list.set(entries);
+    return list;
+  })
 
-    // ====================
+  readonly remove = (item: NgFluxDialogInstance) => this.list.update(v => {
+    const list = Array.from(v);
 
-    history.pushState(null, '', location.href);
-  }
+    const index = list.indexOf(item);
+    list.splice(index, 1);
 
-  readonly remove = (item: NgFluxDialogInstance) => {
-    history.back();
-
-    const entries = this.cloneList();
-
-    const index = this.indexOf(item);
-    entries.splice(index, 1);
-
-    this.list.set(entries);
-  }
+    return list;
+  });
 
   readonly closeAll = () => {
-    const entries = this.cloneList();
+    const entries = Array.from(this.list());
 
     while (entries.length) {
       const instance = entries.pop();
